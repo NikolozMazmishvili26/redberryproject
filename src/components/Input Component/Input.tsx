@@ -85,7 +85,7 @@ const UserInput = styled.input<{ errors: FieldValues; registerValue: string }>`
   font-size: 16px;
   line-height: 21px;
   color: var(--placeholder-color);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   border: ${(props) =>
     props.errors[props.registerValue]
       ? "1.8px solid var(--error-color)"

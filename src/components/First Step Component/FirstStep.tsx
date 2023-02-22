@@ -3,6 +3,9 @@ import { useForm } from "react-hook-form";
 import styled from "styled-components";
 import axios from "axios";
 
+// import assets
+import logo from "../../assets/logo2.png";
+
 // import components
 import Header from "../Header Component/Header";
 import Input from "../Input Component/Input";
@@ -78,7 +81,7 @@ function FirstStep({ step, setStep, handlePrev }: FirstStepProps) {
         <Form onSubmit={nextPage}>
           {/* UserName Container */}
           <UserNameContainer>
-            <div>
+            <InputBox>
               <Input
                 errors={errors}
                 register={register}
@@ -89,8 +92,8 @@ function FirstStep({ step, setStep, handlePrev }: FirstStepProps) {
                 regex={/^[ა-ჰ\s]+$/}
                 regexErrorMessage="გამოიყენე ქართული ასოები"
               />
-            </div>
-            <div>
+            </InputBox>
+            <InputBox>
               <Input
                 errors={errors}
                 register={register}
@@ -101,7 +104,7 @@ function FirstStep({ step, setStep, handlePrev }: FirstStepProps) {
                 regex={/^[ა-ჰ\s]+$/}
                 regexErrorMessage="გამოიყენე ქართული ასოები"
               />
-            </div>
+            </InputBox>
           </UserNameContainer>
           {/* Selectbox Container */}
 
@@ -167,6 +170,7 @@ function FirstStep({ step, setStep, handlePrev }: FirstStepProps) {
           </NextButton>
         </Form>
       </FirstStepContainer>
+      <LogoImage src={logo} alt="logo" />
     </>
   );
 }
@@ -177,16 +181,35 @@ const FirstStepContainer = styled.div`
   max-width: 1226px;
   width: 100%;
   background-color: var(--container-bg);
-  padding: 38px 16px 58px 16px;
-  margin-top: 11px;
   border-radius: 12px 12px 0px 0px;
   margin: 11px auto;
+  display: flex;
+  justify-content: center;
+  padding: 38px 16px 58px 16px;
+  @media screen and (min-width: 890px) {
+    padding: 96px 16px 44px 16px;
+    margin-top: 25px;
+  }
+
+  @media screen and (min-width: 950px) {
+    padding-left: 0px;
+    padding-right: 0px;
+  }
 `;
 
 const Form = styled.form`
-  background-color: var(--container-bg) !important;
+  max-width: 878px;
+  width: 100%;
+`;
+
+const LogoImage = styled.img`
   display: flex;
-  flex-direction: column;
+  margin: 67px auto;
+  margin-bottom: 45px;
+
+  @media screen and (max-width: 890px) {
+    display: none;
+  }
 `;
 
 // User Name Container
@@ -195,6 +218,16 @@ const UserNameContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 23px;
+
+  @media screen and (min-width: 890px) {
+    flex-direction: row;
+    gap: 64px;
+  }
+`;
+
+const InputBox = styled.div`
+  max-width: 878px;
+  width: 100%;
 `;
 
 // selectbox container
@@ -204,6 +237,11 @@ const SelectboxContainer = styled.div`
   flex-direction: column;
   margin-top: 26px;
   gap: 46px;
+
+  @media screen and (min-width: 890px) {
+    margin-top: 52px;
+    gap: 53px;
+  }
 `;
 
 // user contact Container
@@ -213,10 +251,17 @@ const ContactContainer = styled.div`
   flex-direction: column;
   gap: 22px;
   margin-top: 25px;
+  @media screen and (min-width: 890px) {
+    margin-top: 51px;
+    gap: 48px;
+  }
 `;
 
 // next btn styles
 const NextButton = styled.button`
+  display: flex;
+  justify-content: center;
+  align-items: center;
   font-style: normal;
   font-weight: 500;
   font-size: 18px;
@@ -225,9 +270,21 @@ const NextButton = styled.button`
   background-color: var(--btn-color);
   border: none;
   cursor: pointer;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   width: 132px;
   height: 46px;
   margin-top: 43px;
   margin-left: auto;
+  transition-duration: 0.2s;
+
+  @media screen and (min-width: 890px) {
+    margin-top: 95px;
+    width: 176px;
+    height: 60px;
+    font-size: 20px;
+  }
+
+  &:hover {
+    background-color: var(--btn-hover-color);
+  }
 `;

@@ -51,7 +51,7 @@ function Select({
   }, [selectboxValue]);
 
   return (
-    <>
+    <UserSelectContainer>
       <UserSelect errors={errors} registerValue={registerValue}>
         <SelectValue>
           {selectboxValue ? selectboxValue : selectValue}
@@ -60,6 +60,7 @@ function Select({
           src={arrow}
           alt="arrow"
           onClick={() => setIsSelectDropdownOpen(!isSelectDropdownOpen)}
+          isSelectDropdownOpen={isSelectDropdownOpen}
         />
       </UserSelect>
       <SelectDropdown isSelectDropdownOpen={isSelectDropdownOpen}>
@@ -82,17 +83,23 @@ function Select({
         {...register(registerValue, { required: true })}
         value={selectboxValue?.toString()}
       />
-    </>
+    </UserSelectContainer>
   );
 }
 
 export default Select;
 
+const UserSelectContainer = styled.div`
+  position: relative;
+  width: 100%;
+  height: 100%;
+`;
+
 const UserSelect = styled.div<{ errors: FieldValues; registerValue: string }>`
   width: 100%;
   height: 60px;
   background-color: var(--input-bg-color);
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -111,16 +118,21 @@ const SelectValue = styled.p`
   letter-spacing: 0.04em;
 `;
 
-const SelectArrow = styled.img`
-  transform: rotate(270deg);
+const SelectArrow = styled.img<{ isSelectDropdownOpen: boolean }>`
+  transition: all 0.2s ease-in;
+  transform: ${(props) =>
+    props.isSelectDropdownOpen ? "rotate(90deg)" : "rotate(270deg)"};
   cursor: pointer;
 `;
 
 const SelectDropdown = styled.div<{ isSelectDropdownOpen: boolean }>`
+  position: absolute;
+  z-index: 9999;
   width: 100%;
   filter: drop-shadow(0px 4px 34px rgba(0, 0, 0, 0.25));
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   background-color: #ffffff;
-  max-height: ${(props) => (props.isSelectDropdownOpen ? "100%" : "0")};
+  max-height: ${(props) => (props.isSelectDropdownOpen ? "300px" : "0px")};
+  transition: max-height 0.2s ease-in;
   overflow: hidden;
 `;

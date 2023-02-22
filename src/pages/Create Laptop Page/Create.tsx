@@ -6,7 +6,7 @@ import FirstStep from "../../components/First Step Component/FirstStep";
 import SecondStep from "../../components/Second Step Component/SecondStep";
 
 function Create() {
-  const [step, setStep] = useState<number>(1);
+  const [step, setStep] = useState<number>(2);
 
   const navigate = useNavigate();
 

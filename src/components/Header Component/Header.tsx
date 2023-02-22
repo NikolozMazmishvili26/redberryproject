@@ -13,8 +13,8 @@ interface HeaderProps {
 function Header({ step, handlePrev }: HeaderProps) {
   return (
     <HeaderContainer>
-      <BackArrowBox>
-        <BackArrowImage src={backArrow} alt="arrow" onClick={handlePrev} />
+      <BackArrowBox onClick={handlePrev}>
+        <BackArrowImage src={backArrow} alt="arrow" />
       </BackArrowBox>
       <HeaderCounterContainer>
         {/*  */}
@@ -51,7 +51,7 @@ const BackArrowBox = styled.div`
   left: 16px;
   cursor: pointer;
 
-  @media screen and (min-width: 1230px) {
+  @media screen and (min-width: 890px) {
     width: 53px;
     height: 53px;
     display: flex;
@@ -72,7 +72,7 @@ const BackArrowImage = styled.img`
 const HeaderCounterContainer = styled.div`
   text-align: center;
   margin-top: 31px;
-  @media screen and (min-width: 1230px) {
+  @media screen and (min-width: 890px) {
     display: flex;
     align-items: flex-start;
     gap: 66px;
@@ -98,7 +98,7 @@ const EmployerTitle = styled.h2`
   color: var(--counter-title-color);
   cursor: pointer;
 
-  @media screen and (min-width: 1230px) {
+  @media screen and (min-width: 890px) {
     font-size: 20px;
     line-height: 24px;
   }
@@ -106,7 +106,7 @@ const EmployerTitle = styled.h2`
 
 const EmployerLineImage = styled.img`
   display: none;
-  @media screen and (min-width: 1230px) {
+  @media screen and (min-width: 890px) {
     display: block;
   }
 `;
@@ -117,7 +117,7 @@ const LaptopContainer = styled(EmployerContainer)``;
 
 const LaptopTitle = styled.h2`
   display: none;
-  @media screen and (min-width: 1230px) {
+  @media screen and (min-width: 890px) {
     font-style: normal;
     font-weight: 700;
     font-size: 20px;
@@ -130,7 +130,7 @@ const LaptopTitle = styled.h2`
 
 const LaptopLineImage = styled.img`
   display: none;
-  @media screen and (min-width: 1230px) {
+  @media screen and (min-width: 890px) {
     display: block;
   }
 `;
@@ -144,7 +144,7 @@ const Counter = styled.p`
   text-align: center;
   color: var(--counter-color);
 
-  @media screen and (min-width: 1230px) {
+  @media screen and (min-width: 890px) {
     display: none;
   }
 `;

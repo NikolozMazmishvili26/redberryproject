@@ -70,6 +70,7 @@ const GlobalStyles = createGlobalStyle`
   /* global classess */
 
   :root{
+    /* color variables */
     --btn-color :#62A1EB;
     --input-bg-color : #EBEBEB;
     --border-color : #8AC0E2;
@@ -82,8 +83,13 @@ const GlobalStyles = createGlobalStyle`
     --placeholder-color : rgba(0, 0, 0, 0.6);
     --error-color : #E52F2F;
     --hover-color:#E7F0F8;
-  }
+    --blue-color: #4386A9;
+    --error-bg-color : #FFEDED;
 
+    /* radious variables */
+    --border-radius : 8px;
+    --large-border-radius:18px;
+  }
 `;
 
 function App() {
