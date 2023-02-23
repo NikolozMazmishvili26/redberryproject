@@ -7,14 +7,14 @@ import {
 } from "react-hook-form/dist/types/form";
 
 // import components
-import SelectDropdownList from "../First Step Component/SelectDropdownList";
+import SelectDropdownList from "./SelectDropdownList";
 
 // import assets
 import arrow from "../../assets/backArrow.png";
 import styled from "styled-components";
 
 // imported interfaces
-import { DataProps } from "../First Step Component/FirstStep";
+import { DataProps } from "../../apiRequests/getRequest/useGetData";
 
 // interfaces
 interface SelectProps {
@@ -25,7 +25,7 @@ interface SelectProps {
   setValue: UseFormSetValue<FieldValues>;
   clearErrors: UseFormClearErrors<FieldValues>;
   data: DataProps[];
-  setTeamId: React.Dispatch<React.SetStateAction<number | null>>;
+  setTeamId?: React.Dispatch<React.SetStateAction<number | null>>;
 }
 
 function Select({
@@ -72,7 +72,13 @@ function Select({
               name={list.name}
               setSelectboxValue={setSelectboxValue}
               setIsSelectDropdownOpen={setIsSelectDropdownOpen}
-              setTeamId={setTeamId}
+              setTeamId={
+                setTeamId ||
+                (
+                  (): React.Dispatch<React.SetStateAction<number | null>> =>
+                  (): void => {}
+                )()
+              }
               registerValue={registerValue}
             />
           );

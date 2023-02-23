@@ -1,15 +1,17 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import styled from "styled-components";
-import axios from "axios";
+
+// import api request
+import useGetData, { DataProps } from "../../apiRequests/getRequest/useGetData";
 
 // import assets
 import logo from "../../assets/logo2.png";
 
 // import components
-import Header from "../Header Component/Header";
-import Input from "../Input Component/Input";
-import Select from "../Select Component/Select";
+import Header from "../../components/Header Component/Header";
+import Input from "../../components/Input Component/Input";
+import Select from "../../components/Select Component/Select";
 
 // interfaces
 
@@ -17,12 +19,6 @@ interface FirstStepProps {
   step: number;
   setStep: React.Dispatch<React.SetStateAction<number>>;
   handlePrev: () => void;
-}
-
-export interface DataProps {
-  id: number;
-  name: string;
-  team_id: number;
 }
 
 // api links
@@ -51,23 +47,8 @@ function FirstStep({ step, setStep, handlePrev }: FirstStepProps) {
   const [teamId, setTeamId] = useState<number | null>(null);
   const [positions, setPositions] = useState<DataProps[]>([]);
 
-  useEffect(() => {
-    const getTeamsData = async function () {
-      const getData = await axios.get(teamAPI);
-      const response = await getData.data;
-      setTeams(response.data);
-    };
-    getTeamsData();
-  }, []);
-
-  useEffect(() => {
-    const getPositionData = async function () {
-      const getData = await axios.get(positionAPI);
-      const response = await getData.data;
-      setPositions(response.data);
-    };
-    getPositionData();
-  }, []);
+  useGetData(teamAPI, setTeams);
+  useGetData(positionAPI, setPositions);
 
   const filterPositionData = positions.filter(
     (position) => position.team_id === teamId
@@ -75,7 +56,7 @@ function FirstStep({ step, setStep, handlePrev }: FirstStepProps) {
 
   return (
     <>
-      <Header step={step} handlePrev={handlePrev} />
+      <Header step={step} handlePrev={handlePrev} nextPage={nextPage} />
       {/*  */}
       <FirstStepContainer>
         <Form onSubmit={nextPage}>
@@ -91,6 +72,7 @@ function FirstStep({ step, setStep, handlePrev }: FirstStepProps) {
                 registerValue="firstName"
                 regex={/^[ა-ჰ\s]+$/}
                 regexErrorMessage="გამოიყენე ქართული ასოები"
+                defaultErrorMessage="მინიმუმ 2 სიმბოლო, ქართული ასოები"
               />
             </InputBox>
             <InputBox>
@@ -103,6 +85,7 @@ function FirstStep({ step, setStep, handlePrev }: FirstStepProps) {
                 registerValue="lastName"
                 regex={/^[ა-ჰ\s]+$/}
                 regexErrorMessage="გამოიყენე ქართული ასოები"
+                defaultErrorMessage="მინიმუმ 2 სიმბოლო, ქართული ასოები"
               />
             </InputBox>
           </UserNameContainer>
@@ -128,7 +111,6 @@ function FirstStep({ step, setStep, handlePrev }: FirstStepProps) {
                 setValue={setValue}
                 clearErrors={clearErrors}
                 data={filterPositionData}
-                setTeamId={setTeamId}
                 selectValue="პოზიცია"
                 registerValue="positionSelectValue"
               />
@@ -147,7 +129,8 @@ function FirstStep({ step, setStep, handlePrev }: FirstStepProps) {
                 placeholderValue="nika@redberry.ge"
                 registerValue="email"
                 regex={/^\S+@redberry\.ge$/}
-                regexErrorMessage="უნდა მთავრდებოდეს @redberry.ge-ით"
+                regexErrorMessage="აუცილებელია მთავრდებოდეს @redberry.ge-ით"
+                defaultErrorMessage="უნდა მთავრდებოდეს @redberry.ge-ით"
               />
             </div>
 
@@ -161,6 +144,7 @@ function FirstStep({ step, setStep, handlePrev }: FirstStepProps) {
                 registerValue="phoneNumber"
                 regex={/^(\+995|0)5\d{8}$/}
                 regexErrorMessage="გამოიყენე ქართული მობ-ნომრის ფორმატი"
+                defaultErrorMessage="ქართული მობ-ნომრის ფორმატი"
               />
             </div>
           </ContactContainer>
@@ -187,6 +171,7 @@ const FirstStepContainer = styled.div`
   justify-content: center;
   padding: 38px 16px 58px 16px;
   @media screen and (min-width: 890px) {
+    border-radius: 18px;
     padding: 96px 16px 44px 16px;
     margin-top: 25px;
   }

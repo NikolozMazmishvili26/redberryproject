@@ -1,12 +1,9 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import {
   FieldValues,
   UseFormRegister,
   UseFormSetValue,
-  UseFormTrigger,
   FieldErrors,
-  UseFormClearErrors,
-  UseFormWatch,
 } from "react-hook-form/dist/types";
 import styled from "styled-components";
 
@@ -19,20 +16,13 @@ interface UploadPhotoProps {
   register: UseFormRegister<FieldValues>;
   setValue: UseFormSetValue<FieldValues>;
   errors: FieldErrors<FieldValues>;
-  trigger: UseFormTrigger<FieldValues>;
-  clearErrors: UseFormClearErrors<FieldValues>;
-  watch: UseFormWatch<FieldValues>;
 }
 
-function UploadPhoto({
-  register,
-  setValue,
-  errors,
-  trigger,
-  clearErrors,
-  watch,
-}: UploadPhotoProps) {
+function UploadPhoto({ register, setValue, errors }: UploadPhotoProps) {
   const [uploadImage, setUploadImage] = useState<File | null>(null);
+
+  // handleDrop function
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
@@ -40,12 +30,20 @@ function UploadPhoto({
     setValue("fileUpload", e.dataTransfer.files[0]);
   };
 
+  const handleOpenFileDialog = () => {
+    setUploadImage(null);
+    setValue("fileUpload", null);
+  };
+
+  // handleDrop function
+
   const handleDragOver = (e: React.MouseEvent) => {
     e.preventDefault();
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUploadImage(e.target.files?.[0] || null);
+    setValue("fileUpload", e.target.files?.[0]);
   };
 
   // image size to mb converter
@@ -54,14 +52,6 @@ function UploadPhoto({
 
   return (
     <>
-      <UploadPhotoInput
-        type="file"
-        id="fileUpload"
-        {...register("fileUpload", {
-          required: true,
-        })}
-        onChange={handleChange}
-      />
       {uploadImage ? (
         <UploadedImageWrapper>
           <UploadedImageContainer>
@@ -81,7 +71,7 @@ function UploadPhoto({
               </UploadImageDescriptionContainer>
             </UploadImageInfo>
             {/*  */}
-            <ReUploadButton htmlFor="fileUpload">
+            <ReUploadButton htmlFor="fileUpload" onClick={handleOpenFileDialog}>
               თავიდან ატვირთე
             </ReUploadButton>
           </ReuploadImageContainer>
@@ -92,6 +82,15 @@ function UploadPhoto({
           onDragOver={handleDragOver}
           errors={errors}
         >
+          <UploadPhotoInput
+            type="file"
+            id="fileUpload"
+            {...register("fileUpload", {
+              required: true,
+            })}
+            onChange={handleChange}
+            ref={fileInputRef}
+          />
           <CameraTitle errors={errors}>
             ჩააგდე ან ატვირთე ლეპტოპის ფოტო
           </CameraTitle>
@@ -119,7 +118,7 @@ const UploadPhotoContainer = styled.div<{ errors: FieldErrors<FieldValues> }>`
   flex-direction: column;
   align-items: center;
   padding-top: 59px;
-  padding-bottom: 58px;
+  padding-bottom: 54px;
   gap: 21px;
   background-color: ${(props) =>
     props.errors.fileUpload ? "var( --error-bg-color)" : "#f7f7f7"};
@@ -177,8 +176,14 @@ const UploadPhotoLabel = styled.label<{ errors: FieldErrors<FieldValues> }>`
   line-height: 26px;
   color: ${(props) =>
     props.errors.fileUpload ? "var(--error-color)" : "var(--blue-color)"};
-  width: 146px;
+  max-width: 146px;
+  width: 100%;
   text-align: center;
+  transition-duration: 0.2s;
+
+  &:hover {
+    background-color: var(--btn-hover-color);
+  }
 
   &:before {
     content: "ლეპტოპის ფოტოს ატვირთვა";
@@ -189,10 +194,12 @@ const UploadPhotoLabel = styled.label<{ errors: FieldErrors<FieldValues> }>`
       content: "ატვირთე";
       display: block;
     }
+
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 233px;
+    max-width: 233px;
+    width: 100%;
     height: 60px;
     background-color: var(--btn-color);
     color: #ffffff;
@@ -246,6 +253,7 @@ const ReuploadImageContainer = styled.div`
 
   @media screen and (min-width: 890px) {
     margin-top: 25px;
+    margin-bottom: 39px;
   }
 `;
 
@@ -271,6 +279,18 @@ const ReUploadButton = styled.label`
   line-height: 22px;
   color: #ffffff;
   cursor: pointer;
+  transition-duration: 0.2s;
+
+  &:hover {
+    background-color: var(--btn-hover-color);
+  }
+
+  @media screen and (min-width: 890px) {
+    width: 233px;
+    height: 60px;
+    font-size: 20px;
+    line-height: 24px;
+  }
 `;
 
 // desc container

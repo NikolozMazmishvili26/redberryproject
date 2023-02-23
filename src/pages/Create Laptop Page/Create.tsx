@@ -2,8 +2,8 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 
 // import components
-import FirstStep from "../../components/First Step Component/FirstStep";
-import SecondStep from "../../components/Second Step Component/SecondStep";
+import FirstStep from "../../step components/First Step Component/FirstStep";
+import SecondStep from "../../step components/Second Step Component/SecondStep";
 
 function Create() {
   const [step, setStep] = useState<number>(2);
@@ -23,7 +23,9 @@ function Create() {
       {step === 1 && (
         <FirstStep step={step} setStep={setStep} handlePrev={handlePrev} />
       )}
-      {step === 2 && <SecondStep step={step} handlePrev={handlePrev} />}
+      {step === 2 && (
+        <SecondStep step={step} setStep={setStep} handlePrev={handlePrev} />
+      )}
     </>
   );
 }

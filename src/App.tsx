@@ -67,7 +67,27 @@ const GlobalStyles = createGlobalStyle`
     border-spacing: 0;
   }
 
-  /* global classess */
+  /* reset input type radio default styles */
+
+  input[type=radio] {
+    border: 2px solid #4d9ac3;
+    height: 20px;
+    width: 20px;
+  }
+
+  input[type=radio] {
+    -webkit-appearance: none;
+    border-radius: 50%;
+    cursor: pointer;
+    outline: none;
+  }
+
+  input[type=radio]:checked {
+  background-color: #4d9ac3;
+}
+
+
+  /* global css variables */
 
   :root{
     /* color variables */

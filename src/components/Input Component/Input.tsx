@@ -10,6 +10,9 @@ interface InputProps {
   registerValue: string;
   regex: RegExp;
   regexErrorMessage: string;
+  defaultErrorMessage: string;
+  //
+  moneyImage?: string;
 }
 
 function Input({
@@ -21,7 +24,20 @@ function Input({
   registerValue,
   regex,
   regexErrorMessage,
+  defaultErrorMessage,
+  //
+  moneyImage,
 }: InputProps) {
+  // register values without min length
+  const registerValuesWithoutMinLength =
+    registerValue !== "email" &&
+    registerValue !== "phoneNumber" &&
+    registerValue !== "laptopName" &&
+    registerValue !== "cpuCore" &&
+    registerValue !== "cpuThread" &&
+    registerValue !== "laptopRam" &&
+    registerValue !== "laptopPrice";
+
   return (
     <>
       {" "}
@@ -32,31 +48,36 @@ function Input({
       >
         {labelValue}
       </Label>
-      <UserInput
-        id={inputIdValue}
-        placeholder={placeholderValue}
-        // props
-        errors={errors}
-        registerValue={registerValue}
-        {...register(registerValue, {
-          required: {
-            value: true,
-            message: "მოცემული ველი სავალდებულია!",
-          },
-          minLength: {
-            value: 2,
-            message: "გამოიყენე მინიმუმ 2 სიმბოლო",
-          },
-          pattern: {
-            value: regex,
-            message: regexErrorMessage,
-          },
-        })}
-      />
+      <InputContainer>
+        <UserInput
+          id={inputIdValue}
+          placeholder={placeholderValue}
+          // props
+          errors={errors}
+          registerValue={registerValue}
+          {...register(registerValue, {
+            required: {
+              value: true,
+              message: "მოცემული ველი სავალდებულია!",
+            },
+            ...(registerValuesWithoutMinLength && {
+              minLength: { message: "გამოიყენე მინიმუმ 2 სიმბოლო", value: 2 },
+            }),
+
+            pattern: {
+              value: regex,
+              message: regexErrorMessage,
+            },
+          })}
+        />
+        {registerValue === "laptopPrice" && (
+          <MoneyImage src={moneyImage} alt="moneyImg" />
+        )}
+      </InputContainer>
       <ErrorMessage errors={errors} registerValue={registerValue}>
         {errors[registerValue]
           ? errors[registerValue].message
-          : "მინიმუმ 2 სიმბოლო, ქართული ასოები"}
+          : defaultErrorMessage}
       </ErrorMessage>
     </>
   );
@@ -102,4 +123,25 @@ const ErrorMessage = styled.p<{ errors: FieldValues; registerValue: string }>`
     props.errors[props.registerValue]
       ? "var(--error-color)"
       : "color: #2e2e2e;"};
+`;
+
+//
+
+const InputContainer = styled.div`
+  position: relative;
+`;
+
+const MoneyImage = styled.img`
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 13px;
+  height: 16px;
+  object-fit: cover;
+
+  @media screen and (min-width: 890px) {
+    width: 18px;
+    height: 21px;
+  }
 `;

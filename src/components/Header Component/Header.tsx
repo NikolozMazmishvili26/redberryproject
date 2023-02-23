@@ -8,9 +8,11 @@ import laptopLine from "../../assets/laptopLine.png";
 interface HeaderProps {
   step: number;
   handlePrev: () => void;
+  nextPage?: (e: any) => void;
+  setStep?: React.Dispatch<React.SetStateAction<number>>;
 }
 
-function Header({ step, handlePrev }: HeaderProps) {
+function Header({ step, handlePrev, nextPage, setStep }: HeaderProps) {
   return (
     <HeaderContainer>
       <BackArrowBox onClick={handlePrev}>
@@ -19,8 +21,9 @@ function Header({ step, handlePrev }: HeaderProps) {
       <HeaderCounterContainer>
         {/*  */}
         <EmployerContainer>
-          <EmployerTitle>
-            {step === 1 ? "თანამშრომლის ინფო" : "ლეპტოპის მახასიათებლები"}
+          <EmployerTitle onClick={() => setStep && setStep(1)}>
+            თანამშრომლის ინფო
+            {/* {step === 1 ? "თანამშრომლის ინფო" : "ლეპტოპის მახასიათებლები"} */}
           </EmployerTitle>
           {step === 1 && (
             <EmployerLineImage src={employerLine} alt="lineImage" />
@@ -28,7 +31,7 @@ function Header({ step, handlePrev }: HeaderProps) {
         </EmployerContainer>
         {/*  */}
         <LaptopContainer>
-          <LaptopTitle>ლეპტოპის მახასიათებლები</LaptopTitle>
+          <LaptopTitle onClick={nextPage}>ლეპტოპის მახასიათებლები</LaptopTitle>
           {step === 2 && <LaptopLineImage src={laptopLine} alt="lineImage" />}
         </LaptopContainer>
 
