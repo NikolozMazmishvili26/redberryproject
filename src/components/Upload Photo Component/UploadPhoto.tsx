@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   FieldValues,
   UseFormRegister,
@@ -11,43 +11,113 @@ import styled from "styled-components";
 import camera from "../../assets/camera.png";
 import success from "../../assets/success.png";
 import error from "../../assets/error.png";
+import localforage from "localforage";
 
 interface UploadPhotoProps {
   register: UseFormRegister<FieldValues>;
   setValue: UseFormSetValue<FieldValues>;
   errors: FieldErrors<FieldValues>;
+  // localstorage states
+  info: Record<string, any>;
+  setInfo: React.Dispatch<React.SetStateAction<Record<string, any>>>;
 }
 
-function UploadPhoto({ register, setValue, errors }: UploadPhotoProps) {
-  const [uploadImage, setUploadImage] = useState<File | null>(null);
-
+function UploadPhoto({
+  register,
+  setValue,
+  errors,
+  // localstorage states
+  info,
+  setInfo,
+}: UploadPhotoProps) {
+  // upload image state
+  const [uploadImage, setUploadImage] = useState<string | null>(null);
+  const [image, setImage] = useState<File | null>(null);
   // handleDrop function
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
-    setUploadImage(e.dataTransfer.files[0] || null);
-    setValue("fileUpload", e.dataTransfer.files[0]);
+
+    const file = e.dataTransfer.files[0];
+    if (file) {
+      setImage(file);
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      setInfo({
+        ...info,
+        fileUpload: reader.result,
+        fileName: file?.name,
+        fileSize: file?.size,
+      });
+    };
+    reader.readAsDataURL(file);
   };
 
+  // reupload button function
   const handleOpenFileDialog = () => {
     setUploadImage(null);
     setValue("fileUpload", null);
+    let filledInfo = JSON.parse(localStorage.getItem("filledInfo") as string);
+    delete filledInfo.fileUpload;
+    delete filledInfo.fileName;
+    delete filledInfo.fileSize;
+    localStorage.setItem("filledInfo", JSON.stringify(filledInfo));
+    setInfo(filledInfo);
+    // clear localforage
+    localforage.clear();
+    setImage(null);
   };
 
-  // handleDrop function
-
-  const handleDragOver = (e: React.MouseEvent) => {
-    e.preventDefault();
-  };
-
+  // onchange function
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setUploadImage(e.target.files?.[0] || null);
-    setValue("fileUpload", e.target.files?.[0]);
+    const { name } = e.target;
+
+    const file = e.target.files?.[0];
+    if (file) {
+      setImage(file);
+    }
+    if (!file) {
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      setInfo({
+        ...info,
+        [name]: reader.result,
+        fileName: file?.name,
+        fileSize: file?.size,
+      });
+    };
+    reader.readAsDataURL(file);
   };
+
+  // useEffect to update values from localstorage
+  useEffect(() => {
+    setUploadImage(info.fileUpload);
+    setValue("fileUpload", image);
+  }, [info.fileUpload, image]);
+
+  // local forage configuration
+
+  useEffect(() => {
+    localforage
+      .getItem("image")
+      .then((value) => {
+        setImage(value || []);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
+
+  useEffect(() => {
+    localforage.setItem("image", image);
+  }, [image]);
 
   // image size to mb converter
-  const imageSize = uploadImage?.size;
+  const imageSize = info.fileSize;
   const sizeInMb = imageSize && imageSize / (1024 * 1024);
 
   return (
@@ -55,10 +125,7 @@ function UploadPhoto({ register, setValue, errors }: UploadPhotoProps) {
       {uploadImage ? (
         <UploadedImageWrapper>
           <UploadedImageContainer>
-            <UploadImage
-              src={URL.createObjectURL(uploadImage)}
-              alt="uploadedPhoto"
-            />
+            <UploadImage src={uploadImage} alt="uploadedPhoto" />
           </UploadedImageContainer>
           {/* Re Upload */}
           <ReuploadImageContainer>
@@ -66,7 +133,7 @@ function UploadPhoto({ register, setValue, errors }: UploadPhotoProps) {
             <UploadImageInfo>
               <SuccessImage src={success} alt="success" />
               <UploadImageDescriptionContainer>
-                <ImageName>{uploadImage?.name}</ImageName>
+                <ImageName>{info.fileName}</ImageName>
                 <ImageSize>{sizeInMb?.toFixed(1) + " " + "mb"}</ImageSize>
               </UploadImageDescriptionContainer>
             </UploadImageInfo>
@@ -79,7 +146,7 @@ function UploadPhoto({ register, setValue, errors }: UploadPhotoProps) {
       ) : (
         <UploadPhotoContainer
           onDrop={handleDrop}
-          onDragOver={handleDragOver}
+          onDragOver={(e) => e.preventDefault()}
           errors={errors}
         >
           <UploadPhotoInput

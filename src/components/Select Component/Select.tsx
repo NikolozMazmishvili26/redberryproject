@@ -4,6 +4,7 @@ import {
   UseFormClearErrors,
   UseFormRegister,
   UseFormSetValue,
+  UseFormTrigger,
 } from "react-hook-form/dist/types/form";
 
 // import components
@@ -25,7 +26,14 @@ interface SelectProps {
   setValue: UseFormSetValue<FieldValues>;
   clearErrors: UseFormClearErrors<FieldValues>;
   data: DataProps[];
+  teamId?: number | null;
   setTeamId?: React.Dispatch<React.SetStateAction<number | null>>;
+  setPositionId?: React.Dispatch<React.SetStateAction<number | null>>;
+  setBrandId?: React.Dispatch<React.SetStateAction<number | null>>;
+  // localstorage states
+  info: Record<string, any>;
+  setInfo: React.Dispatch<React.SetStateAction<Record<string, any>>>;
+  trigger: UseFormTrigger<FieldValues>;
 }
 
 function Select({
@@ -36,11 +44,18 @@ function Select({
   setValue,
   clearErrors,
   data,
+  teamId,
   setTeamId,
+  setPositionId,
+  setBrandId,
+  // localstorage states
+  info,
+  setInfo,
+  trigger,
 }: SelectProps) {
   // selectbox states
   const [isSelectDropdownOpen, setIsSelectDropdownOpen] = useState(false);
-  const [selectboxValue, setSelectboxValue] = useState<string | null>(null);
+  const [selectboxValue, setSelectboxValue] = useState<string | null>("");
 
   // selectbox error validation useEffect
   useEffect(() => {
@@ -48,7 +63,32 @@ function Select({
     if (selectboxValue) {
       clearErrors(registerValue);
     }
+    // save to local storage
+    setInfo({ ...info, [registerValue]: selectboxValue });
   }, [selectboxValue]);
+
+  useEffect(() => {
+    const takeValueFromLocalStorage = localStorage.getItem("filledInfo");
+    const localStorageValue = takeValueFromLocalStorage
+      ? JSON.parse(takeValueFromLocalStorage)[registerValue]
+      : "";
+    if (takeValueFromLocalStorage) {
+      setSelectboxValue(localStorageValue);
+      setValue(registerValue, localStorageValue);
+    } else {
+      setSelectboxValue(""); // set default value if localStorageValue is null or undefined
+    }
+  }, [setValue, setSelectboxValue, registerValue]);
+
+  // showDropdown Function
+
+  const handleShowDropdown = () => {
+    if (registerValue === "positionSelectValue" && teamId) {
+      setIsSelectDropdownOpen(!isSelectDropdownOpen);
+    } else if (registerValue !== "positionSelectValue") {
+      setIsSelectDropdownOpen(!isSelectDropdownOpen);
+    }
+  };
 
   return (
     <UserSelectContainer>
@@ -59,7 +99,7 @@ function Select({
         <SelectArrow
           src={arrow}
           alt="arrow"
-          onClick={() => setIsSelectDropdownOpen(!isSelectDropdownOpen)}
+          onClick={handleShowDropdown}
           isSelectDropdownOpen={isSelectDropdownOpen}
         />
       </UserSelect>
@@ -79,6 +119,8 @@ function Select({
                   (): void => {}
                 )()
               }
+              setPositionId={setPositionId}
+              setBrandId={setBrandId}
               registerValue={registerValue}
             />
           );
@@ -87,7 +129,7 @@ function Select({
       <input
         type="hidden"
         {...register(registerValue, { required: true })}
-        value={selectboxValue?.toString()}
+        value={selectboxValue?.toString() || ""}
       />
     </UserSelectContainer>
   );

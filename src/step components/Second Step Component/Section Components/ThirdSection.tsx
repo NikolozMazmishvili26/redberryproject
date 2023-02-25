@@ -3,6 +3,8 @@ import {
   UseFormRegister,
   FieldValues,
   FieldErrors,
+  UseFormTrigger,
+  UseFormSetValue,
 } from "react-hook-form/dist/types";
 
 import DatePicker from "react-datepicker";
@@ -22,6 +24,11 @@ interface ThirdSectionProps {
   register: UseFormRegister<FieldValues>;
   nextPage: (e: any) => void;
   setStep: React.Dispatch<React.SetStateAction<number>>;
+  // localstorage states
+  info: Record<string, any>;
+  setInfo: React.Dispatch<React.SetStateAction<Record<string, any>>>;
+  trigger: UseFormTrigger<FieldValues>;
+  setValue: UseFormSetValue<FieldValues>;
 }
 
 function ThirdSection({
@@ -29,6 +36,11 @@ function ThirdSection({
   register,
   nextPage,
   setStep,
+  // localstorage states
+  info,
+  setInfo,
+  trigger,
+  setValue,
 }: ThirdSectionProps) {
   // DatePicker state
   const [selectedDate, setSelectedDate] = useState<Date | null | undefined>(
@@ -72,6 +84,11 @@ function ThirdSection({
             regexErrorMessage="გამოიყენე მხოლოდ ციფრები"
             defaultErrorMessage="მხოლოდ ციფრები"
             moneyImage={money}
+            // localstorage states
+            info={info}
+            setInfo={setInfo}
+            setValue={setValue}
+            trigger={trigger}
           />
         </DateBox>
       </TopSideContainer>
@@ -90,11 +107,21 @@ function ThirdSection({
               radioName="laptopState"
               radioValue="ახალი"
               register={register}
+              // localstorage states
+              info={info}
+              setInfo={setInfo}
+              setValue={setValue}
+              trigger={trigger}
             />
             <InputRadio
               radioName="laptopState"
               radioValue="მეორადი"
               register={register}
+              // localstorage states
+              info={info}
+              setInfo={setInfo}
+              setValue={setValue}
+              trigger={trigger}
             />
           </RadioInputWrapper>
         </RadioContainer>

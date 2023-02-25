@@ -1,6 +1,14 @@
-import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
+import {
+  UseFormRegister,
+  FieldValues,
+  UseFormHandleSubmit,
+  UseFormSetValue,
+  UseFormClearErrors,
+  UseFormTrigger,
+  FieldErrors,
+} from "react-hook-form/dist/types";
 
 // import api request
 import useGetData, { DataProps } from "../../apiRequests/getRequest/useGetData";
@@ -19,22 +27,36 @@ interface FirstStepProps {
   step: number;
   setStep: React.Dispatch<React.SetStateAction<number>>;
   handlePrev: () => void;
+  // localstorage states
+  info: Record<string, any>;
+  setInfo: React.Dispatch<React.SetStateAction<Record<string, any>>>;
+  // react-hook-form props
+  register: UseFormRegister<FieldValues>;
+  handleSubmit: UseFormHandleSubmit<FieldValues>;
+  setValue: UseFormSetValue<FieldValues>;
+  clearErrors: UseFormClearErrors<FieldValues>;
+  trigger: UseFormTrigger<FieldValues>;
+  errors: FieldErrors<FieldValues>;
 }
 
 // api links
 const teamAPI = "https://pcfy.redberryinternship.ge/api/teams";
 const positionAPI = "https://pcfy.redberryinternship.ge/api/positions";
 
-function FirstStep({ step, setStep, handlePrev }: FirstStepProps) {
-  //
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    clearErrors,
-    formState: { errors },
-  } = useForm();
-
+function FirstStep({
+  step,
+  setStep,
+  handlePrev,
+  info,
+  setInfo,
+  // react-hook-form props
+  clearErrors,
+  handleSubmit,
+  register,
+  setValue,
+  trigger,
+  errors,
+}: FirstStepProps) {
   const nextPage = (e: any) => {
     e.preventDefault();
     handleSubmit(() => {
@@ -44,8 +66,14 @@ function FirstStep({ step, setStep, handlePrev }: FirstStepProps) {
 
   // get data from backend
   const [teams, setTeams] = useState<DataProps[]>([]);
-  const [teamId, setTeamId] = useState<number | null>(null);
   const [positions, setPositions] = useState<DataProps[]>([]);
+  //
+  const [teamId, setTeamId] = useState<number | null>(
+    JSON.parse(localStorage.getItem("teamId") || "null")
+  );
+  const [positionId, setPositionId] = useState<number | null>(
+    JSON.parse(localStorage.getItem("positionId") || "null")
+  );
 
   useGetData(teamAPI, setTeams);
   useGetData(positionAPI, setPositions);
@@ -53,6 +81,18 @@ function FirstStep({ step, setStep, handlePrev }: FirstStepProps) {
   const filterPositionData = positions.filter(
     (position) => position.team_id === teamId
   );
+
+  // saving team & position Id to localstorage
+
+  useEffect(() => {
+    localStorage.setItem("teamId", JSON.stringify(teamId));
+  }, [teamId]);
+
+  useEffect(() => {
+    localStorage.setItem("positionId", JSON.stringify(positionId));
+  }, [positionId]);
+
+  //
 
   return (
     <>
@@ -73,6 +113,11 @@ function FirstStep({ step, setStep, handlePrev }: FirstStepProps) {
                 regex={/^[ა-ჰ\s]+$/}
                 regexErrorMessage="გამოიყენე ქართული ასოები"
                 defaultErrorMessage="მინიმუმ 2 სიმბოლო, ქართული ასოები"
+                // localstorage states
+                info={info}
+                setInfo={setInfo}
+                setValue={setValue}
+                trigger={trigger}
               />
             </InputBox>
             <InputBox>
@@ -86,6 +131,11 @@ function FirstStep({ step, setStep, handlePrev }: FirstStepProps) {
                 regex={/^[ა-ჰ\s]+$/}
                 regexErrorMessage="გამოიყენე ქართული ასოები"
                 defaultErrorMessage="მინიმუმ 2 სიმბოლო, ქართული ასოები"
+                // localstorage states
+                info={info}
+                setInfo={setInfo}
+                setValue={setValue}
+                trigger={trigger}
               />
             </InputBox>
           </UserNameContainer>
@@ -102,6 +152,10 @@ function FirstStep({ step, setStep, handlePrev }: FirstStepProps) {
                 setTeamId={setTeamId}
                 selectValue="თიმი"
                 registerValue="teamSelectValue"
+                // localstorage states
+                info={info}
+                setInfo={setInfo}
+                trigger={trigger}
               />
             </div>
             <div>
@@ -113,6 +167,12 @@ function FirstStep({ step, setStep, handlePrev }: FirstStepProps) {
                 data={filterPositionData}
                 selectValue="პოზიცია"
                 registerValue="positionSelectValue"
+                teamId={teamId}
+                setPositionId={setPositionId}
+                // localstorage states
+                info={info}
+                setInfo={setInfo}
+                trigger={trigger}
               />
             </div>
           </SelectboxContainer>
@@ -131,6 +191,11 @@ function FirstStep({ step, setStep, handlePrev }: FirstStepProps) {
                 regex={/^\S+@redberry\.ge$/}
                 regexErrorMessage="აუცილებელია მთავრდებოდეს @redberry.ge-ით"
                 defaultErrorMessage="უნდა მთავრდებოდეს @redberry.ge-ით"
+                // localstorage states
+                info={info}
+                setInfo={setInfo}
+                setValue={setValue}
+                trigger={trigger}
               />
             </div>
 
@@ -145,6 +210,11 @@ function FirstStep({ step, setStep, handlePrev }: FirstStepProps) {
                 regex={/^(\+995|0)5\d{8}$/}
                 regexErrorMessage="გამოიყენე ქართული მობ-ნომრის ფორმატი"
                 defaultErrorMessage="ქართული მობ-ნომრის ფორმატი"
+                // localstorage states
+                info={info}
+                setInfo={setInfo}
+                setValue={setValue}
+                trigger={trigger}
               />
             </div>
           </ContactContainer>

@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 // import pages
 import Landing from "./pages/Landing Page/Landing";
 import Create from "./pages/Create Laptop Page/Create";
+import Success from "./pages/Success Page/Success";
 
 const GlobalStyles = createGlobalStyle`
 
@@ -120,6 +121,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Landing />}></Route>
           <Route path="/create" element={<Create />} />
+          <Route path="/success" element={<Success />}></Route>
         </Routes>
       </BrowserRouter>
     </>

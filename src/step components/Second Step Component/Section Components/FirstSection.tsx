@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 import {
   UseFormRegister,
@@ -25,6 +25,10 @@ interface FirstSectionProps {
   setValue: UseFormSetValue<FieldValues>;
   errors: FieldErrors<FieldValues>;
   clearErrors: UseFormClearErrors<FieldValues>;
+  // localstorage states
+  info: Record<string, any>;
+  setInfo: React.Dispatch<React.SetStateAction<Record<string, any>>>;
+  trigger: UseFormTrigger<FieldValues>;
 }
 
 // api link
@@ -35,16 +39,33 @@ function FirstSection({
   setValue,
   errors,
   clearErrors,
+  // localstorage states
+  info,
+  setInfo,
+  trigger,
 }: FirstSectionProps) {
   // get Data from Backend
 
   const [brands, setBrands] = useState<DataProps[]>([]);
+  const [brandId, setBrandId] = useState<number | null>(
+    JSON.parse(localStorage.getItem("brandId") || "null")
+  );
   useGetData(laptopBrandAPI, setBrands);
+
+  useEffect(() => {
+    localStorage.setItem("brandId", JSON.stringify(brandId));
+  }, [brandId]);
 
   return (
     <FirstSectionContainer>
       {/* Upload Photo Component */}
-      <UploadPhoto register={register} setValue={setValue} errors={errors} />
+      <UploadPhoto
+        register={register}
+        setValue={setValue}
+        errors={errors}
+        info={info}
+        setInfo={setInfo}
+      />
 
       {/* laptop info container */}
       <LaptopInfoContainer>
@@ -59,6 +80,11 @@ function FirstSection({
             regex={/^[a-zA-Z0-9 !@#\$%\^&\*\(\)\_\+=]+$/}
             regexErrorMessage="გამოიყენე ლათინური ასოები, ციფრები, !@#$%^&*()_+= "
             defaultErrorMessage="ლათინური ასოები, ციფრები, !@#$%^&*()_+="
+            // localstorage states
+            info={info}
+            setInfo={setInfo}
+            setValue={setValue}
+            trigger={trigger}
           />
         </LaptopBox>
         <LaptopBox>
@@ -68,8 +94,13 @@ function FirstSection({
             setValue={setValue}
             clearErrors={clearErrors}
             data={brands}
+            setBrandId={setBrandId}
             selectValue="ლეპტოპის ბრენდი"
             registerValue="laptopBrand"
+            // localstorage states
+            info={info}
+            setInfo={setInfo}
+            trigger={trigger}
           />
         </LaptopBox>
       </LaptopInfoContainer>

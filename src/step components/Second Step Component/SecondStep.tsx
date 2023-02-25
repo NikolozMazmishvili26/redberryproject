@@ -1,5 +1,15 @@
-import { useForm } from "react-hook-form";
 import styled from "styled-components";
+import axios from "axios";
+import {
+  UseFormRegister,
+  FieldValues,
+  UseFormHandleSubmit,
+  UseFormSetValue,
+  UseFormClearErrors,
+  UseFormTrigger,
+  FieldErrors,
+  UseFormWatch,
+} from "react-hook-form/dist/types";
 
 // import assets
 import logo from "../../assets/logo2.png";
@@ -14,24 +24,94 @@ interface SecondStepProps {
   step: number;
   handlePrev: () => void;
   setStep: React.Dispatch<React.SetStateAction<number>>;
+  // localstorage states
+  info: Record<string, any>;
+  setInfo: React.Dispatch<React.SetStateAction<Record<string, any>>>;
+  // react-hook-form props
+  register: UseFormRegister<FieldValues>;
+  handleSubmit: UseFormHandleSubmit<FieldValues>;
+  setValue: UseFormSetValue<FieldValues>;
+  clearErrors: UseFormClearErrors<FieldValues>;
+  trigger: UseFormTrigger<FieldValues>;
+  errors: FieldErrors<FieldValues>;
+  watch: UseFormWatch<FieldValues>;
 }
 
-function SecondStep({ step, setStep, handlePrev }: SecondStepProps) {
-  //
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    trigger,
-    clearErrors,
-    watch,
-    formState: { errors },
-  } = useForm();
+function SecondStep({
+  step,
+  setStep,
+  handlePrev,
+  // localstorage states
+  info,
+  setInfo,
+  // react-hook-form props
+  clearErrors,
+  errors,
+  handleSubmit,
+  register,
+  setValue,
+  trigger,
+  watch,
+}: SecondStepProps) {
+  // parse localstorage value to int function
+  function parseLocalStorageInt(key: string): number | undefined {
+    const value = localStorage.getItem(key);
+    if (value !== null) {
+      return parseInt(value);
+    }
+    return undefined;
+  }
+  const teamId = parseLocalStorageInt("teamId");
+  const positionId = parseLocalStorageInt("positionId");
+  const brandId = parseLocalStorageInt("brandId");
+
+  // -------------------------------------------------------------------------------
+  //  post request
+  const token = "323762cb61990e16562a59d00dd70162";
 
   const nextPage = (e: any) => {
     e.preventDefault();
+
     handleSubmit((data) => {
-      console.log("data", data);
+      //
+      if (data.laptopState === "ახალი") {
+        data.laptopState = "new";
+      } else if (data.laptopState === "მეორადი") {
+        data.laptopState = "used";
+      }
+
+      //
+
+      axios
+        .post(
+          "https://pcfy.redberryinternship.ge/api/laptop/create/",
+          {
+            name: data.firstName,
+            surname: data.lastName,
+            team_id: teamId !== undefined ? teamId : 0,
+            position_id: positionId !== undefined ? positionId : 0,
+            phone_number: data.phoneNumber,
+            email: data.email,
+            token: token,
+            laptop_name: data.laptopName,
+            laptop_image: data.fileUpload,
+            laptop_brand_id: brandId !== undefined ? brandId : 0,
+            laptop_cpu: data.cpu,
+            laptop_cpu_cores: data.cpuCore,
+            laptop_cpu_threads: data.cpuThread,
+            laptop_ram: data.laptopRam,
+            laptop_hard_drive_type: data.memoryType,
+            laptop_state: data.laptopState,
+            laptop_price: data.laptopPrice,
+          },
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        )
+        .then((resp) => console.log(resp))
+        .catch((err) => console.log(err));
     })();
   };
 
@@ -46,6 +126,10 @@ function SecondStep({ step, setStep, handlePrev }: SecondStepProps) {
             setValue={setValue}
             errors={errors}
             clearErrors={clearErrors}
+            // localstorage states
+            info={info}
+            setInfo={setInfo}
+            trigger={trigger}
           />
 
           {/* second section */}
@@ -53,9 +137,12 @@ function SecondStep({ step, setStep, handlePrev }: SecondStepProps) {
             register={register}
             setValue={setValue}
             errors={errors}
-            trigger={trigger}
             clearErrors={clearErrors}
             watch={watch}
+            // localstorage states
+            info={info}
+            setInfo={setInfo}
+            trigger={trigger}
           />
 
           {/* third section */}
@@ -64,6 +151,11 @@ function SecondStep({ step, setStep, handlePrev }: SecondStepProps) {
             register={register}
             nextPage={nextPage}
             setStep={setStep}
+            // localstorage states
+            info={info}
+            setInfo={setInfo}
+            trigger={trigger}
+            setValue={setValue}
           />
         </Form>
       </SecondStepContainer>
@@ -99,4 +191,8 @@ const LogoImage = styled.img`
   margin: auto;
   margin-top: 56px;
   margin-bottom: 52px;
+
+  @media screen and (max-width: 890px) {
+    display: none;
+  }
 `;

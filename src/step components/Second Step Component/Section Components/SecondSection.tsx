@@ -28,9 +28,12 @@ interface SecondSectionProps {
   register: UseFormRegister<FieldValues>;
   setValue: UseFormSetValue<FieldValues>;
   errors: FieldErrors<FieldValues>;
-  trigger: UseFormTrigger<FieldValues>;
   clearErrors: UseFormClearErrors<FieldValues>;
   watch: UseFormWatch<FieldValues>;
+  // localstorage states
+  info: Record<string, any>;
+  setInfo: React.Dispatch<React.SetStateAction<Record<string, any>>>;
+  trigger: UseFormTrigger<FieldValues>;
 }
 
 // Api Link
@@ -41,8 +44,11 @@ function SecondSection({
   errors,
   register,
   setValue,
-  trigger,
   watch,
+  // localstorage states
+  info,
+  setInfo,
+  trigger,
 }: SecondSectionProps) {
   // get data from backend
   const [cpu, setCpu] = useState<DataProps[]>([]);
@@ -62,6 +68,10 @@ function SecondSection({
             data={cpu}
             selectValue="CPU"
             registerValue="cpu"
+            // localstorage states
+            info={info}
+            setInfo={setInfo}
+            trigger={trigger}
           />
         </CpuSelectContainer>
 
@@ -77,6 +87,11 @@ function SecondSection({
               regex={/^\d+$/}
               regexErrorMessage="გამოიყენე მხოლოდ ციფრები"
               defaultErrorMessage="მხოლოდ ციფრები"
+              // localstorage states
+              info={info}
+              setInfo={setInfo}
+              setValue={setValue}
+              trigger={trigger}
             />
           </CpuBox>
 
@@ -91,6 +106,11 @@ function SecondSection({
               regex={/^\d+$/}
               regexErrorMessage="გამოიყენე მხოლოდ ციფრები"
               defaultErrorMessage="მხოლოდ ციფრები"
+              // localstorage states
+              info={info}
+              setInfo={setInfo}
+              setValue={setValue}
+              trigger={trigger}
             />
           </CpuBox>
         </CpuContainer>
@@ -110,6 +130,11 @@ function SecondSection({
             regex={/^\d+$/}
             regexErrorMessage="მხოლოდ ციფრები"
             defaultErrorMessage="გამოიყენე მხოლოდ ციფრები"
+            // localstorage states
+            info={info}
+            setInfo={setInfo}
+            setValue={setValue}
+            trigger={trigger}
           />
         </LaptopRamBox>
         {/*  */}
@@ -128,11 +153,21 @@ function SecondSection({
                 radioName="memoryType"
                 radioValue="SSD"
                 register={register}
+                // localstorage states
+                info={info}
+                setInfo={setInfo}
+                setValue={setValue}
+                trigger={trigger}
               />
               <InputRadio
                 radioName="memoryType"
                 radioValue="HDD"
                 register={register}
+                // localstorage states
+                info={info}
+                setInfo={setInfo}
+                setValue={setValue}
+                trigger={trigger}
               />
             </RadioInputWrapper>
           </RadioContainer>

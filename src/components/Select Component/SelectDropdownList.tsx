@@ -6,6 +6,10 @@ interface SelectDropdownListProps {
   setSelectboxValue: React.Dispatch<React.SetStateAction<string | null>>;
   setIsSelectDropdownOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setTeamId: React.Dispatch<React.SetStateAction<number | null>>;
+  setPositionId:
+    | React.Dispatch<React.SetStateAction<number | null>>
+    | undefined;
+  setBrandId: React.Dispatch<React.SetStateAction<number | null>> | undefined;
   registerValue: string;
 }
 
@@ -15,6 +19,8 @@ function SelectDropdownList({
   setSelectboxValue,
   setIsSelectDropdownOpen,
   setTeamId,
+  setPositionId,
+  setBrandId,
   registerValue,
 }: SelectDropdownListProps) {
   const handleList = (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
@@ -23,6 +29,18 @@ function SelectDropdownList({
 
     if (registerValue === "teamSelectValue") {
       setTeamId(id);
+    }
+
+    if (registerValue === "positionSelectValue") {
+      if (setPositionId) {
+        setPositionId(id);
+      }
+    }
+
+    if (registerValue === "laptopBrand") {
+      if (setBrandId) {
+        setBrandId(id);
+      }
     }
   };
 

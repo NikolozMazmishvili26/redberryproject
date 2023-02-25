@@ -1,4 +1,10 @@
-import { FieldValues, UseFormRegister } from "react-hook-form/dist/types";
+import { useEffect } from "react";
+import {
+  FieldValues,
+  UseFormRegister,
+  UseFormSetValue,
+  UseFormTrigger,
+} from "react-hook-form/dist/types";
 import styled from "styled-components";
 
 interface InputProps {
@@ -11,8 +17,12 @@ interface InputProps {
   regex: RegExp;
   regexErrorMessage: string;
   defaultErrorMessage: string;
-  //
   moneyImage?: string;
+  // localstorage states
+  info: Record<string, any>;
+  setInfo: React.Dispatch<React.SetStateAction<Record<string, any>>>;
+  setValue: UseFormSetValue<FieldValues>;
+  trigger: UseFormTrigger<FieldValues>;
 }
 
 function Input({
@@ -25,8 +35,12 @@ function Input({
   regex,
   regexErrorMessage,
   defaultErrorMessage,
-  //
   moneyImage,
+  // localstorage states
+  info,
+  setInfo,
+  setValue,
+  trigger,
 }: InputProps) {
   // register values without min length
   const registerValuesWithoutMinLength =
@@ -37,6 +51,25 @@ function Input({
     registerValue !== "cpuThread" &&
     registerValue !== "laptopRam" &&
     registerValue !== "laptopPrice";
+
+  // localstorage for input
+
+  const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setInfo({ ...info, [name]: value });
+    setValue(name, value); // Set the new value
+    await trigger(name); // Trigger the validation
+  };
+
+  useEffect(() => {
+    const takeValueFromLocalStorage = localStorage.getItem("filledInfo");
+    const localStorageValue = takeValueFromLocalStorage
+      ? JSON.parse(takeValueFromLocalStorage)[registerValue]
+      : "";
+    if (takeValueFromLocalStorage) {
+      setValue(registerValue, localStorageValue);
+    }
+  }, [setValue]);
 
   return (
     <>
@@ -69,6 +102,7 @@ function Input({
               message: regexErrorMessage,
             },
           })}
+          onChange={handleChange}
         />
         {registerValue === "laptopPrice" && (
           <MoneyImage src={moneyImage} alt="moneyImg" />
@@ -112,6 +146,7 @@ const UserInput = styled.input<{ errors: FieldValues; registerValue: string }>`
       ? "1.8px solid var(--error-color)"
       : "1.8px solid var(--border-color)"};
   outline: none;
+  color: #000000;
 `;
 const ErrorMessage = styled.p<{ errors: FieldValues; registerValue: string }>`
   margin-top: 8px;
