@@ -17,7 +17,9 @@ function Landing() {
         <Link to="/create">
           <Button>ჩანაწერების დამატება</Button>
         </Link>
-        <Button>ჩანაწერების სია</Button>
+        <Link to="/list">
+          <Button>ჩანაწერების სია</Button>
+        </Link>
       </ButtonContainer>
     </LandingContainer>
   );

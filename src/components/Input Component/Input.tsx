@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { KeyboardEventHandler, useEffect } from "react";
 import {
   FieldValues,
   UseFormRegister,
@@ -71,6 +71,22 @@ function Input({
     }
   }, [setValue]);
 
+  // avoid in phoneNumber space function
+
+  const handleKeyPress: KeyboardEventHandler<HTMLInputElement> = (e) => {
+    const key = e.charCode;
+    if (
+      (registerValue === "phoneNumber" ||
+        registerValue === "cpuThread" ||
+        registerValue === "cpuCore" ||
+        registerValue === "laptopRam" ||
+        registerValue === "laptopPrice") &&
+      key === 32
+    ) {
+      e.preventDefault();
+    }
+  };
+
   return (
     <>
       {" "}
@@ -103,6 +119,7 @@ function Input({
             },
           })}
           onChange={handleChange}
+          onKeyPress={handleKeyPress}
         />
         {registerValue === "laptopPrice" && (
           <MoneyImage src={moneyImage} alt="moneyImg" />

@@ -6,7 +6,6 @@ import {
   FieldErrors,
   UseFormTrigger,
   UseFormClearErrors,
-  UseFormWatch,
 } from "react-hook-form/dist/types";
 import styled from "styled-components";
 
@@ -29,7 +28,6 @@ interface SecondSectionProps {
   setValue: UseFormSetValue<FieldValues>;
   errors: FieldErrors<FieldValues>;
   clearErrors: UseFormClearErrors<FieldValues>;
-  watch: UseFormWatch<FieldValues>;
   // localstorage states
   info: Record<string, any>;
   setInfo: React.Dispatch<React.SetStateAction<Record<string, any>>>;
@@ -44,7 +42,6 @@ function SecondSection({
   errors,
   register,
   setValue,
-  watch,
   // localstorage states
   info,
   setInfo,

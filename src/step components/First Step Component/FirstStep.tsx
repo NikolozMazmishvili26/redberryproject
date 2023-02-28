@@ -59,7 +59,7 @@ function FirstStep({
 }: FirstStepProps) {
   const nextPage = (e: any) => {
     e.preventDefault();
-    handleSubmit(() => {
+    handleSubmit((data) => {
       setStep(step + 1);
     })();
   };
@@ -219,9 +219,7 @@ function FirstStep({
             </div>
           </ContactContainer>
 
-          <NextButton type="submit" onClick={nextPage}>
-            შემდეგი
-          </NextButton>
+          <NextButton onClick={nextPage}>შემდეგი</NextButton>
         </Form>
       </FirstStepContainer>
       <LogoImage src={logo} alt="logo" />

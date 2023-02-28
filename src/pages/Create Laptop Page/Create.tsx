@@ -19,7 +19,13 @@ function Create() {
   } = useForm();
 
   //
-  const [step, setStep] = useState<number>(1);
+  const [step, setStep] = useState<number>(
+    JSON.parse(localStorage.getItem("currentStep") || "1")
+  );
+
+  useEffect(() => {
+    localStorage.setItem("currentStep", JSON.stringify(step));
+  }, [step]);
 
   const navigate = useNavigate();
 

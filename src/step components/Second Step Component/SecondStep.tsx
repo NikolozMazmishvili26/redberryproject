@@ -1,5 +1,8 @@
+import { useEffect, useState } from "react";
 import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import localforage from "localforage";
 import {
   UseFormRegister,
   FieldValues,
@@ -8,7 +11,6 @@ import {
   UseFormClearErrors,
   UseFormTrigger,
   FieldErrors,
-  UseFormWatch,
 } from "react-hook-form/dist/types";
 
 // import assets
@@ -34,7 +36,6 @@ interface SecondStepProps {
   clearErrors: UseFormClearErrors<FieldValues>;
   trigger: UseFormTrigger<FieldValues>;
   errors: FieldErrors<FieldValues>;
-  watch: UseFormWatch<FieldValues>;
 }
 
 function SecondStep({
@@ -51,8 +52,22 @@ function SecondStep({
   register,
   setValue,
   trigger,
-  watch,
 }: SecondStepProps) {
+  // DatePicker state
+  const [selectedDate, setSelectedDate] = useState<Date | null | undefined>(
+    localStorage.getItem("date")
+      ? new Date(localStorage.getItem("date")!)
+      : null
+  );
+
+  useEffect(() => {
+    if (selectedDate) {
+      localStorage.setItem("date", selectedDate.toISOString());
+    }
+  }, [selectedDate]);
+
+  // localStorage.clear();
+
   // parse localstorage value to int function
   function parseLocalStorageInt(key: string): number | undefined {
     const value = localStorage.getItem(key);
@@ -67,9 +82,11 @@ function SecondStep({
 
   // -------------------------------------------------------------------------------
   //  post request
-  const token = "323762cb61990e16562a59d00dd70162";
+  const token = "3b75138a7edeb001d3bf978b804c82e9  ";
 
-  const nextPage = (e: any) => {
+  const navigate = useNavigate();
+
+  const submitForm = (e: any) => {
     e.preventDefault();
 
     handleSubmit((data) => {
@@ -79,8 +96,6 @@ function SecondStep({
       } else if (data.laptopState === "მეორადი") {
         data.laptopState = "used";
       }
-
-      //
 
       axios
         .post(
@@ -102,6 +117,7 @@ function SecondStep({
             laptop_ram: data.laptopRam,
             laptop_hard_drive_type: data.memoryType,
             laptop_state: data.laptopState,
+            ...(selectedDate && { laptop_purchase_date: selectedDate }),
             laptop_price: data.laptopPrice,
           },
           {
@@ -110,7 +126,11 @@ function SecondStep({
             },
           }
         )
-        .then((resp) => console.log(resp))
+        .then((resp) => {
+          navigate("/success");
+          localStorage.clear();
+          localforage.clear();
+        })
         .catch((err) => console.log(err));
     })();
   };
@@ -119,7 +139,7 @@ function SecondStep({
     <>
       <Header step={step} handlePrev={handlePrev} setStep={setStep} />
       <SecondStepContainer>
-        <Form onSubmit={nextPage}>
+        <Form onSubmit={submitForm}>
           {/* first section */}
           <FirstSection
             register={register}
@@ -138,7 +158,6 @@ function SecondStep({
             setValue={setValue}
             errors={errors}
             clearErrors={clearErrors}
-            watch={watch}
             // localstorage states
             info={info}
             setInfo={setInfo}
@@ -149,13 +168,16 @@ function SecondStep({
           <ThirdSection
             errors={errors}
             register={register}
-            nextPage={nextPage}
+            submitForm={submitForm}
             setStep={setStep}
             // localstorage states
             info={info}
             setInfo={setInfo}
             trigger={trigger}
             setValue={setValue}
+            // date state
+            selectedDate={selectedDate}
+            setSelectedDate={setSelectedDate}
           />
         </Form>
       </SecondStepContainer>

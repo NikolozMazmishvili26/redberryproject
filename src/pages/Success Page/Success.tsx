@@ -11,7 +11,9 @@ function Success() {
         <SuccessImage src={success} alt="success" />
         <SuccessTitle>ჩანაწერი დამატებულია</SuccessTitle>
         <ButtonContainer>
-          <ListButton>სიაში გადაყვანა</ListButton>
+          <StyledLink to="/list">
+            <ListButton>სიაში გადაყვანა</ListButton>
+          </StyledLink>
           <Link to="/">
             <HomeButton>მთავარი</HomeButton>
           </Link>
@@ -85,8 +87,12 @@ const ButtonContainer = styled.div`
   }
 `;
 
-const ListButton = styled.button`
+const StyledLink = styled(Link)`
   max-width: 297px;
+  width: 100%;
+`;
+
+const ListButton = styled.button`
   width: 100%;
   height: 60px;
   background-color: var(--btn-color);

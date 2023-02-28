@@ -17,36 +17,41 @@ import money from "../../../assets/money.png";
 // import components
 import Input from "../../../components/Input Component/Input";
 import InputRadio from "../../../components/Input Radio Component/InputRadio";
-import { useState } from "react";
+
+// import icons
+import { IoMdRemoveCircleOutline } from "react-icons/io";
 
 interface ThirdSectionProps {
   errors: FieldErrors<FieldValues>;
   register: UseFormRegister<FieldValues>;
-  nextPage: (e: any) => void;
+  submitForm: (e: any) => void;
   setStep: React.Dispatch<React.SetStateAction<number>>;
   // localstorage states
   info: Record<string, any>;
   setInfo: React.Dispatch<React.SetStateAction<Record<string, any>>>;
   trigger: UseFormTrigger<FieldValues>;
   setValue: UseFormSetValue<FieldValues>;
+  // date state
+  selectedDate: Date | null | undefined;
+  setSelectedDate: React.Dispatch<
+    React.SetStateAction<Date | null | undefined>
+  >;
 }
 
 function ThirdSection({
   errors,
   register,
-  nextPage,
+  submitForm,
   setStep,
   // localstorage states
   info,
   setInfo,
   trigger,
   setValue,
+  // date state
+  selectedDate,
+  setSelectedDate,
 }: ThirdSectionProps) {
-  // DatePicker state
-  const [selectedDate, setSelectedDate] = useState<Date | null | undefined>(
-    null
-  );
-
   // DatePicker on change
   const handleDateChange = (date: Date | [Date, Date] | null): void => {
     if (date instanceof Date) {
@@ -56,6 +61,13 @@ function ThirdSection({
     } else {
       setSelectedDate(date[0]);
     }
+  };
+
+  // clear date
+
+  const handleClear = () => {
+    setSelectedDate(null);
+    localStorage.removeItem("date");
   };
 
   return (
@@ -70,6 +82,11 @@ function ThirdSection({
             placeholderText="დდ / თთ / წწწწ"
             showYearDropdown
             scrollableMonthYearDropdown
+          />
+          <ClearDate
+            onClick={handleClear}
+            size={20}
+            selectedDate={selectedDate}
           />
         </DateBox>
         <DateBox>
@@ -129,7 +146,7 @@ function ThirdSection({
 
       <ButtonContainer>
         <PrevButton onClick={() => setStep(1)}>უკან</PrevButton>
-        <SubmitButton type="submit" onClick={nextPage}>
+        <SubmitButton type="submit" onClick={submitForm}>
           დამახსოვრება
         </SubmitButton>
       </ButtonContainer>
@@ -167,6 +184,7 @@ const TopSideContainer = styled.div`
 `;
 
 const DateBox = styled.div`
+  position: relative;
   display: flex;
   flex-direction: column;
   @media screen and (min-width: 890px) {
@@ -199,6 +217,17 @@ const DateInput = styled(DatePicker)`
     max-width: 407px;
     width: 100%;
   }
+`;
+
+const ClearDate = styled(IoMdRemoveCircleOutline)<{
+  selectedDate: Date | null | undefined;
+}>`
+  position: absolute;
+  cursor: pointer;
+  right: 7px;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: ${(props) => (props.selectedDate ? "block" : "none")};
 `;
 
 // bottom side container styles

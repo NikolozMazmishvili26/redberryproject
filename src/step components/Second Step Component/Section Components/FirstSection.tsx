@@ -65,6 +65,7 @@ function FirstSection({
         errors={errors}
         info={info}
         setInfo={setInfo}
+        trigger={trigger}
       />
 
       {/* laptop info container */}

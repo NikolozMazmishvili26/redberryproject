@@ -5,6 +5,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Landing from "./pages/Landing Page/Landing";
 import Create from "./pages/Create Laptop Page/Create";
 import Success from "./pages/Success Page/Success";
+import List from "./pages/Recorded List Page/List";
+import Unique from "./pages/Unique Page/Unique";
 
 const GlobalStyles = createGlobalStyle`
 
@@ -91,21 +93,31 @@ const GlobalStyles = createGlobalStyle`
   /* global css variables */
 
   :root{
-    /* color variables */
+    /* btn color variables */
     --btn-color :#62A1EB;
+    --btn-hover-color : #1A5DAB;
+
+    /* input colors */
     --input-bg-color : #EBEBEB;
     --border-color : #8AC0E2;
-    --btn-hover-color : #1A5DAB;
-    --counter-title-color : #232323;
-    --counter-color : #898989;
-    --arrow-bg-color:#D9D9D9;
-    --container-bg:#FFFFFF;
     --label-color : #000000;
     --placeholder-color : rgba(0, 0, 0, 0.6);
+
+    /* counter title colors */
+    --counter-title-color : #232323;
+    --counter-color : #898989;
+    --container-bg:#FFFFFF;
+
+    /* general colors */
+    --arrow-bg-color:#D9D9D9;
     --error-color : #E52F2F;
     --hover-color:#E7F0F8;
     --blue-color: #4386A9;
     --error-bg-color : #FFEDED;
+
+    /* card colors */
+    --card-bg-color :#EAFAFF;
+    --card-text-color: #2E2E2E;
 
     /* radious variables */
     --border-radius : 8px;
@@ -122,6 +134,8 @@ function App() {
           <Route path="/" element={<Landing />}></Route>
           <Route path="/create" element={<Create />} />
           <Route path="/success" element={<Success />}></Route>
+          <Route path="/list" element={<List />}></Route>
+          <Route path="/list/laptop/:laptopId" element={<Unique />}></Route>
         </Routes>
       </BrowserRouter>
     </>
